@@ -32,12 +32,7 @@ public class CSVHelper {
     static String[] HEADERs = {"Id", "Title", "Description", "Published"};
 
     public static boolean hasCSVFormat(MultipartFile file) {
-
-        if (!TYPE.equals(file.getContentType())) {
-            return false;
-        }
-
-        return true;
+        return TYPE.equals(file.getContentType());
     }
 
     public static List<Poi> csvToPois(InputStream is) {
