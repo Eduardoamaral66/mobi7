@@ -99,7 +99,7 @@ public class PoiTrackingService {
     private Boolean isUnderPoi(Point positionPoint, Point poiPoint, Integer radius) {
         Double distance = EarthCalc.gcd.distance(positionPoint, poiPoint);
 
-        return radius.doubleValue() > distance;
+        return radius.doubleValue() >= distance;
     }
 
     private PoiTrackingDTO getOrCreateTrackingDTO(String poiName, String licensePlate) {
@@ -132,6 +132,8 @@ public class PoiTrackingService {
             Long plusTime = SECONDS.between(lastDate, actualDate);
 
             dto.setTime(actualTime + plusTime);
+        }else{
+            dto.setFirstDate(actualDateP);
         }
     }
 }

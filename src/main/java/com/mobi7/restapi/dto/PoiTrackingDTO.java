@@ -11,6 +11,7 @@ public class PoiTrackingDTO {
     private String licensePlate;
     private String poiName;
     private Long time;
+    private Date firstDate;
     private Date lastDate;
 
     public String getLicensePlate() {
@@ -43,5 +44,13 @@ public class PoiTrackingDTO {
 
     public void setLastDate(Date lastDate) {
         this.lastDate = lastDate;
+    }
+
+    public Date getFirstDate() {
+        return firstDate;
+    }
+
+    public void setFirstDate(Date firstDate) {
+        this.firstDate = firstDate;
     }
 }
