@@ -11,7 +11,7 @@ import javax.persistence.Id;
  * @author Eduardo
  */
 @Entity
-public class Poi {
+public class Poi implements GeoLocation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

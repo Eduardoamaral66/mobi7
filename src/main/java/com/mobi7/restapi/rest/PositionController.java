@@ -35,7 +35,7 @@ public class PositionController {
 
     @PostMapping("/upload")
     public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("file") MultipartFile file) {
-        String message = "";
+        String message;
 
         if (CSVHelper.hasCSVFormat(file)) {
             try {
@@ -55,7 +55,7 @@ public class PositionController {
 
     @GetMapping("/list")
     public ResponseEntity<List<Position>> getPois() {
-        List<Position> pois = positionService.getAllPositions();
+        List<Position> pois = positionService.findAll();
 
         if (CollectionUtils.isEmpty(pois)) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

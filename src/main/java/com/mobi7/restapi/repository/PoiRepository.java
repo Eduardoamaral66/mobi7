@@ -14,4 +14,6 @@ public interface PoiRepository extends CrudRepository<Poi, Long> {
 
     @Override
     List<Poi> findAll();
+
+    List<Poi> findByName(String name);
 }

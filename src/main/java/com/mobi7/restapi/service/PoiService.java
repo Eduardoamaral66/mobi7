@@ -28,7 +28,11 @@ public class PoiService {
         }
     }
 
-    public List<Poi> getAllPois() {
+    public List<Poi> findAll() {
         return repository.findAll();
+    }
+
+    public List<Poi> findByName(String poiName) {
+        return repository.findByName(poiName);
     }
 }

@@ -56,7 +56,7 @@ public class PoiController {
 
     @GetMapping("/list")
     public ResponseEntity<List<Poi>> getPois() {
-        List<Poi> pois = poiService.getAllPois();
+        List<Poi> pois = poiService.findAll();
 
         if (CollectionUtils.isEmpty(pois)) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

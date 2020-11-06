@@ -12,7 +12,7 @@ import javax.persistence.Id;
  * @author Eduardo
  */
 @Entity
-public class Position {
+public class Position implements GeoLocation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,11 +1,10 @@
 package com.mobi7.restapi.service;
 
-import com.mobi7.restapi.entity.Poi;
 import com.mobi7.restapi.entity.Position;
-import com.mobi7.restapi.repository.PoiRepository;
 import com.mobi7.restapi.repository.PositionRepository;
 import com.mobi7.restapi.utils.CSVHelper;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,7 +29,15 @@ public class PositionService {
         }
     }
 
-    public List<Position> getAllPositions() {
+    public List<Position> findAll() {
         return repository.findAll();
+    }
+
+    public List<Position> findByDateBetween(Date begin, Date end) {
+        return repository.findByDateBetween(begin, end);
+    }
+
+    public List<Position> findByDateBetweenAndLicensePlate(Date begin, Date end, String licensePlate) {
+        return repository.findByDateBetweenAndLicensePlate(begin, end, licensePlate);
     }
 }

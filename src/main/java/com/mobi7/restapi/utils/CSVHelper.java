@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -68,7 +69,7 @@ public class CSVHelper {
         try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
                 CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim());) {
 
-            DateFormat parser = new SimpleDateFormat("EE MMM d y H:m:s 'GMT'Z (zz)");
+            DateFormat parser = new SimpleDateFormat("E MMM dd yyyy HH:mm:ss z");
 
             List<Position> positions = new ArrayList<>();
             Iterable<CSVRecord> csvRecords = csvParser.getRecords();
@@ -82,8 +83,9 @@ public class CSVHelper {
 
                 Date date = new Date();
                 try {
-                    date = parser.parse(csvRecord.get("data_posicao"));
-                } catch (ParseException ex) {
+                    date = new Date(csvRecord.get("data_posicao"));
+//                    date = parser.parse(csvRecord.get("data_posicao"));
+                } catch (Exception ex) {
                     log.error("Erro no formato da data", ex);
                 }
 
