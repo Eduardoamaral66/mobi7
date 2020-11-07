@@ -31,11 +31,12 @@ public class PoiTrackingService {
     @Autowired
     private PositionService posistionService;
 
-    private List<PoiTrackingDTO> tracking;
+    private List<PoiTrackingDTO> trackingInProcess;
+    private List<PoiTrackingDTO> trackingClosed;
 
     public List<PoiTrackingDTO> trackPosition(PoiTrackingFilter filter) {
-        tracking = new ArrayList();
-        PoiTrackingDTO dto;
+        trackingInProcess = new ArrayList();
+        trackingClosed = new ArrayList<>();
 
         final List<Poi> pois;
         final List<Position> positions;
@@ -43,26 +44,13 @@ public class PoiTrackingService {
         prepareFilter(filter);
         pois = loadPois(filter);
         positions = loadPositions(filter);
+        calculeTracking(positions, pois);
 
-        for (Position position : positions) {
-            String licensePlate = position.getLicensePlate();
-            Date positionDate = position.getDate();
-            Point positionPoint = getGeoPoint(position);
-
-            for (Poi poi : pois) {
-                String poiName = poi.getName();
-                Point poiPoint = getGeoPoint(poi);
-                Boolean isUnderPoi = isUnderPoi(positionPoint, poiPoint, poi.getRadius());
-
-                if (isUnderPoi) {
-                    dto = getOrCreateTrackingDTO(poiName, licensePlate);
-                    calculateTime(dto, positionDate);
-                    dto.setLastDate(positionDate);
-                }
-            }
+        for (PoiTrackingDTO poiTrackingDTO : trackingClosed) {
+            calculateTime(poiTrackingDTO);
         }
 
-        return tracking;
+        return trackingClosed;
     }
 
     private void prepareFilter(PoiTrackingFilter filter) {
@@ -102,15 +90,19 @@ public class PoiTrackingService {
         return radius.doubleValue() >= distance;
     }
 
-    private PoiTrackingDTO getOrCreateTrackingDTO(String poiName, String licensePlate) {
-        PoiTrackingDTO track;
-        track = tracking
+    private PoiTrackingDTO getTrackingDTOInProcess(String poiName, String licensePlate) {
+        return trackingInProcess
                 .stream()
                 .filter(dto
                         -> dto.getPoiName().equals(poiName)
                 && dto.getLicensePlate().equals(licensePlate)
                 ).findFirst()
                 .orElse(null);
+    }
+
+    private PoiTrackingDTO getOrCreateTrackingDTO(String poiName, String licensePlate) {
+        PoiTrackingDTO track;
+        track = getTrackingDTOInProcess(poiName, licensePlate);
 
         if (track == null) {
             track = new PoiTrackingDTO();
@@ -118,22 +110,56 @@ public class PoiTrackingService {
             track.setPoiName(poiName);
             track.setTime(0L);
 
-            tracking.add(track);
+            trackingInProcess.add(track);
         }
         return track;
     }
 
-    private void calculateTime(PoiTrackingDTO dto, Date actualDateP) {
-        if (dto.getLastDate() != null) {
-            LocalDateTime lastDate = dto.getLastDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-            LocalDateTime actualDate = actualDateP.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-
-            Long actualTime = dto.getTime();
-            Long plusTime = SECONDS.between(lastDate, actualDate);
-
-            dto.setTime(actualTime + plusTime);
-        }else{
-            dto.setFirstDate(actualDateP);
+    private void calculateTime(PoiTrackingDTO dto) {
+        if (dto.getFirstDate() == null) {
+            throw new RuntimeException("Tracking without firstDate");
         }
+        if (dto.getLastDate() == null) {
+            throw new RuntimeException("Tracking without lastDate");
+        }
+
+        LocalDateTime firstDate = dto.getFirstDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+        LocalDateTime lastDate = dto.getLastDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+
+        Long time = SECONDS.between(firstDate, lastDate);
+        dto.setTime(time);
+    }
+
+    private void calculeTracking(List<Position> positions, List<Poi> pois) {
+        PoiTrackingDTO dto;
+
+        for (Poi poi : pois) {
+            String poiName = poi.getName();
+            Point poiPoint = getGeoPoint(poi);
+
+            for (Position position : positions) {
+                String licensePlate = position.getLicensePlate();
+                Date positionDate = position.getDate();
+                Point positionPoint = getGeoPoint(position);
+
+                Boolean isUnderPoi = isUnderPoi(positionPoint, poiPoint, poi.getRadius());
+
+                if (isUnderPoi) {
+                    dto = getOrCreateTrackingDTO(poiName, licensePlate);
+                    if (dto.getFirstDate() == null) {
+                        dto.setFirstDate(positionDate);
+                    }
+                    dto.setLastDate(positionDate);
+                } else {
+                    dto = getTrackingDTOInProcess(poiName, licensePlate);
+                    if (dto != null) {
+                        trackingInProcess.remove(dto);
+                        trackingClosed.add(dto);
+                    }
+                }
+
+            }
+        }
+        trackingClosed.addAll(trackingInProcess);
     }
 }
