@@ -12,7 +12,7 @@ import javax.persistence.Id;
  * @author Eduardo
  */
 @Entity
-public class Position implements GeoLocation {
+public class Position implements GeoLocation, Comparable<Position> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -125,5 +125,16 @@ public class Position implements GeoLocation {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public int compareTo(Position o) {
+        int compare = this.licensePlate.compareTo(o.getLicensePlate());
+
+        if (compare == 0) {
+            compare = this.getDate().compareTo(o.getDate());
+        }
+
+        return compare;
     }
 }

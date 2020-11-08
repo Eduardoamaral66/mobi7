@@ -1,7 +1,6 @@
 package com.mobi7.restapi.rest;
 
 import com.mobi7.restapi.dto.PoiTrackingDTO;
-import com.mobi7.restapi.entity.Poi;
 import com.mobi7.restapi.filter.PoiTrackingFilter;
 import com.mobi7.restapi.service.PoiTrackingService;
 import java.util.List;
@@ -10,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

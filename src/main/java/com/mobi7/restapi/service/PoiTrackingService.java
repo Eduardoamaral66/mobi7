@@ -12,6 +12,8 @@ import com.mobi7.restapi.filter.PoiTrackingFilter;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,11 +73,15 @@ public class PoiTrackingService {
     }
 
     private List<Position> loadPositions(PoiTrackingFilter filter) {
+        List<Position> positions;
         if (StringUtils.isEmpty(filter.getLicensePlate())) {
-            return posistionService.findByDateBetween(filter.getInitDate(), filter.getEndDate());
+            positions = posistionService.findByDateBetween(filter.getInitDate(), filter.getEndDate());
         } else {
-            return posistionService.findByDateBetweenAndLicensePlate(filter.getInitDate(), filter.getEndDate(), filter.getLicensePlate());
+            positions = posistionService.findByDateBetweenAndLicensePlate(filter.getInitDate(), filter.getEndDate(), filter.getLicensePlate());
         }
+        Collections.sort(positions);
+
+        return positions;
     }
 
     private Point getGeoPoint(GeoLocation geo) {
