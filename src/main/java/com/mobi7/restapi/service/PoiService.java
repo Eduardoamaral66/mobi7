@@ -33,6 +33,6 @@ public class PoiService {
     }
 
     public List<Poi> findByName(String poiName) {
-        return repository.findByName(poiName);
+        return repository.findByNameIgnoreCase(poiName);
     }
 }

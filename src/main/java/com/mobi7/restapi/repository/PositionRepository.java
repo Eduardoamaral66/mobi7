@@ -20,5 +20,5 @@ public interface PositionRepository extends CrudRepository<Position, Long> {
 
     List<Position> findByDateBetween(Date begin, Date end);
 
-    List<Position> findByDateBetweenAndLicensePlate(Date begin, Date end, String licensePlate);
+    List<Position> findByDateBetweenAndLicensePlateIgnoreCase(Date begin, Date end, String licensePlate);
 }

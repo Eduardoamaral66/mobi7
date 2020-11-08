@@ -38,6 +38,6 @@ public class PositionService {
     }
 
     public List<Position> findByDateBetweenAndLicensePlate(Date begin, Date end, String licensePlate) {
-        return repository.findByDateBetweenAndLicensePlate(begin, end, licensePlate);
+        return repository.findByDateBetweenAndLicensePlateIgnoreCase(begin, end, licensePlate);
     }
 }
